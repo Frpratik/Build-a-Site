@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container profile-page">
+    <div class="profile-header">
+        <img src="{{ user.userprofile.avatar.url|default:'/static/images/default-avatar.png' }}" 
+             alt="{{ user.username }}" 
+             class="profile-avatar">
+        <h1>{{ user.username }}'s Profile</h1>
+        <div class="points-display">
+            <span class="points">{{ user.userprofile.points }}</span>
+            <span class="points-label">Points</span>
+        </div>
+    </div>
+
+    <div class="profile-content">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h3>Update Profile</h3>
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            {{ form|crispy }}
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h3>My Events</h3>
+                        <div class="user-events">
+                            {% for registration in user_events %}
+                                <div class="event-item">
+                                    <h4>{{ registration.event.title }}</h4>
+                                    <p>{{ registration.event.date|date:"F j, Y" }}</p>
+                                    <span class="status">{{ registration.event.status }}</span>
+                                    {% if registration.attended %}
+                                        <span class="badge attended">Attended</span>
+                                    {% endif %}
+                                </div>
+                            {% empty %}
+                                <p>You haven't registered for any events yet.</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="hero-section">
+    <h1>Welcome to EventHub</h1>
+    <p>Discover amazing events and connect with your favorite clubs</p>
+</section>
+
+<section class="upcoming-events">
+    <div class="container">
+        <h2>Upcoming Events</h2>
+        <div class="event-grid">
+            {% for event in upcoming_events %}
+                <div class="card event-card animate-fade-in">
+                    <img src="{{ event.image.url }}" alt="{{ event.title }}" class="event-image">
+                    <div class="event-details">
+                        <h3>{{ event.title }}</h3>
+                        <p>{{ event.description|truncatewords:30 }}</p>
+                        <div class="event-meta">
+                            <span class="event-date">{{ event.date|date:"F j, Y" }}</span>
+                            <span class="event-location">{{ event.location }}</span>
+                        </div>
+                        <div class="event-countdown" data-date="{{ event.date|date:'c' }}"></div>
+                        <div class="event-capacity" data-event-id="{{ event.id }}">
+                            {{ event.eventregistration_set.count }}/{{ event.max_participants }} spots filled
+                        </div>
+                        <a href="{% url 'event_detail' event.id %}" class="btn btn-primary">Learn More</a>
+                    </div>
+                </div>
+            {% empty %}
+                <p>No upcoming events at the moment.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="featured-clubs">
+    <div class="container">
+        <h2>Top Active Clubs</h2>
+        <div class="club-grid">
+            {% for club in top_clubs %}
+                <div class="card club-card animate-fade-in">
+                    <img src="{{ club.logo.url }}" alt="{{ club.name }}" class="club-logo">
+                    <h3>{{ club.name }}</h3>
+                    <p>{{ club.description|truncatewords:20 }}</p>
+                    <div class="club-stats">
+                        <span>{{ club.event_count }} Events</span>
+                        <span>{{ club.members.count }} Members</span>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="leaderboard-preview">
+    <div class="container">
+        <h2>Top Participants</h2>
+        <div class="leaderboard">
+            {% for profile in leaderboard %}
+                <div class="leaderboard-item">
+                    <img src="{{ profile.avatar.url|default:'/static/images/default-avatar.png' }}" 
+                         alt="{{ profile.user.username }}" 
+                         class="avatar">
+                    <div class="user-info">
+                        <h4>{{ profile.user.username }}</h4>
+                        <p>{{ profile.points }} points</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <a href="{% url 'leaderboard' %}" class="btn btn-primary">View Full Leaderboard</a>
+    </div>
+</section>
+{% endblock %}

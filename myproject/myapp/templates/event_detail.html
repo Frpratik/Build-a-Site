@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container event-detail">
+    <div class="event-header">
+        <img src="{{ event.image.url }}" alt="{{ event.title }}" class="event-banner">
+        <h1>{{ event.title }}</h1>
+        <div class="event-meta">
+            <span class="date">{{ event.date|date:"F j, Y, g:i a" }}</span>
+            <span class="location">{{ event.location }}</span>
+            <span class="organizer">Organized by {{ event.club.name }}</span>
+        </div>
+    </div>
+
+    <div class="event-content">
+        <div class="description">
+            {{ event.description|safe }}
+        </div>
+
+        <div class="registration-status">
+            <div class="capacity">
+                <h3>Event Capacity</h3>
+                <div class="event-capacity" data-event-id="{{ event.id }}">
+                    {{ event.eventregistration_set.count }}/{{ event.max_participants }} spots filled
+                </div>
+            </div>
+
+            {% if not is_registered and event.status == 'upcoming' %}
+                <form method="post" action="{% url 'register_event' event.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary" id="register-{{ event.id }}"
+                            {% if event.eventregistration_set.count >= event.max_participants %}disabled{% endif %}>
+                        Register for Event
+                    </button>
+                </form>
+            {% elif is_registered %}
+                <div class="registered-status">
+                    <p>You're registered for this event!</p>
+                    <div class="event-countdown" data-date="{{ event.date|date:'c' }}"></div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="club-info">
+        <h3>About the Organizer</h3>
+        <div class="club-stats">
+            <div>Total Events: {{ club_stats.event_count }}</div>
+            <div>Members: {{ club_stats.member_count }}</div>
+            <div>Active Events: {{ club_stats.active_events }}</div>
+        </div>
+    </div>
+</div>
+{% endblock %}
