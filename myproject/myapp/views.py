@@ -10,7 +10,7 @@ def home(request):
     top_clubs = club_service.get_top_clubs()
     leaderboard = user_service.get_top_users(10)
     
-    return render(request, 'home.html', {
+    return render(request, 'myapp/home.html', {
         'upcoming_events': upcoming_events,
         'top_clubs': top_clubs,
         'leaderboard': leaderboard
@@ -28,7 +28,7 @@ def create_event(request):
             return redirect('event_detail', event.id)
     else:
         form = EventForm()
-    return render(request, 'create_event.html', {'form': form})
+    return render(request, 'myapp/create_event.html', {'form': form})
 
 @login_required
 def event_detail(request, event_id):
@@ -40,7 +40,7 @@ def event_detail(request, event_id):
         'is_registered': is_registered,
         'club_stats': club_service.get_club_stats(event.club)
     }
-    return render(request, 'event_detail.html', context)
+    return render(request, 'myapp/event_detail.html', context)
 
 @login_required
 def register_event(request, event_id):
@@ -56,7 +56,7 @@ def register_event(request, event_id):
 @login_required
 def leaderboard(request):
     top_users = user_service.get_top_users()
-    return render(request, 'leaderboard.html', {'top_users': top_users})
+    return render(request, 'myapp/leaderboard.html', {'top_users': top_users})
 
 @login_required
 def profile(request):
@@ -70,7 +70,7 @@ def profile(request):
         form = UserProfileForm(instance=request.user.userprofile)
     
     user_events = request.user.eventregistration_set.all()
-    return render(request, 'profile.html', {
+    return render(request, 'myapp/profile.html', {
         'form': form,
         'user_events': user_events
     })
